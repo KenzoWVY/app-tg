@@ -1,12 +1,12 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, InferSchemaType } from 'mongoose';
 
-export interface IUser extends Document {
+export interface IUser {
     email: string;
     passwordHash: string;
     refreshToken?: string;
-}
+}  
 
-const UserSchema: Schema = new Schema({
+const UserSchema: Schema = new Schema<IUser>({
     email: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
     refreshToken: { type: String, default: null },

@@ -91,3 +91,16 @@ export const refreshService = async (refreshToken: string) => {
     const newAccessToken = jwt.sign({ userId: user._id }, jwtSecretKey, { expiresIn: '5m' });
     return newAccessToken;
 }
+
+export const getUserInfo = async (userId: string) => {
+    if (!userId) {
+        throw new Error('User ID is required.');
+    }
+
+    const user = await User.findById(userId).select('-passwordHash -refreshToken');
+    if (!user) {
+        throw new Error('User not found.');
+    }
+
+    return user;
+}
