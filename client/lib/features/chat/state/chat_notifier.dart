@@ -1,17 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../domain/chat.dart';
 import '../domain/chat_repository.dart';
-import '../data/chat_repository_impl.dart';
 
-class ChatNotifier extends AsyncNotifier<Chat?> {
-  late final ChatRepository _chatRepository;
+part 'chat_notifier.g.dart';
 
+@riverpod
+class ChatNotifier extends _$ChatNotifier {
   @override
-  FutureOr<Chat?> build() async {
-    _chatRepository = ref.read(chatRepositoryProvider);
+  Future<Chat?> build() async {
     return null;
   }
 
@@ -21,16 +21,18 @@ class ChatNotifier extends AsyncNotifier<Chat?> {
     String? sourceLanguage,
   }) async {
     state = const AsyncValue.loading();
+
     state = await AsyncValue.guard(() async {
-      return await _chatRepository.translateAndSave(
+      final repository = ref.read(chatRepositoryProvider);
+      return await repository.translateAndSave(
         sourceText: sourceText,
         targetLanguage: targetLanguage,
         sourceLanguage: sourceLanguage,
       );
     });
   }
-}
 
-final chatNotifierProvider = AsyncNotifierProvider<ChatNotifier, Chat?>(() {
-  return ChatNotifier();
-});
+  void loadChat(Chat? chat) {
+    state = AsyncData(chat);
+  }
+}

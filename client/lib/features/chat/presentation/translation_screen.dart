@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/chat.dart' as chat_domain;
-import 'chat_notifier.dart';
+import '../state/chat_notifier.dart';
+import '../domain/word_alignment.dart';
 import 'word_lookup_card.dart';
 
 class TranslationScreen extends ConsumerStatefulWidget {
@@ -16,7 +17,7 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
   final _textController = TextEditingController();
   String _sourceLanguage = 'pt';
   String _targetLanguage = 'en';
-  chat_domain.Alignment? _selectedAlignment;
+  WordAlignment? _selectedAlignment;
   bool _isEditing = true;
 
   @override
@@ -27,9 +28,9 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final chatState = ref.watch(chatNotifierProvider);
+    final chatState = ref.watch(chatProvider);
 
-    ref.listen(chatNotifierProvider, (previous, next) {
+    ref.listen(chatProvider, (previous, next) {
       next.whenOrNull(
         data: (chat) {
           if (chat != null && _isEditing) {
@@ -129,7 +130,7 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
                         ? _buildEditableSource(chatState.isLoading)
                         : _buildSimpleWordView(
                             chatState.value?.sourceText ?? '',
-                            chatState.value?.alignments ?? [],
+                            chatState.value?.wordAlignments ?? [],
                             true,
                           ),
                   ),
@@ -252,7 +253,7 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
                     if (_textController.text.trim().isEmpty) return;
                     setState(() => _selectedAlignment = null);
                     ref
-                        .read(chatNotifierProvider.notifier)
+                        .read(chatProvider.notifier)
                         .translate(
                           sourceText: _textController.text,
                           sourceLanguage: _sourceLanguage,
@@ -275,7 +276,7 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
 
   Widget _buildSimpleWordView(
     String text,
-    List<chat_domain.Alignment> alignments,
+    List<WordAlignment> alignments,
     bool isSource,
   ) {
     if (text.isEmpty) return const SizedBox();
@@ -292,7 +293,7 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
             '',
           );
 
-          chat_domain.Alignment? match;
+          WordAlignment? match;
           if (cleanWord.isNotEmpty) {
             try {
               match = alignments.firstWhere((a) {
@@ -345,7 +346,7 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
             ),
             child: _buildSimpleWordView(
               chat.translatedText,
-              chat.alignments,
+              chat.wordAlignments,
               false,
             ),
           ),
@@ -356,7 +357,7 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
             right: 0,
             bottom: 0,
             child: WordLookupCard(
-              alignment: _selectedAlignment!,
+              wordAlignment: _selectedAlignment!,
               onClose: () => setState(() => _selectedAlignment = null),
             ),
           ),

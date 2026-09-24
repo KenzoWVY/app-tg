@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../domain/chat.dart' as chat_domain;
+import '../domain/word_alignment.dart';
+import '../state/chat_notifier.dart';
+import '../state/word_lookup_notifier.dart'; // 👈 Import the notifier we just made
 
-class WordLookupCard extends ConsumerStatefulWidget {
-  final chat_domain.Alignment alignment;
+// Converted from ConsumerStatefulWidget to ConsumerWidget
+class WordLookupCard extends ConsumerWidget {
+  final WordAlignment wordAlignment;
   final VoidCallback onClose;
 
   const WordLookupCard({
     super.key,
-    required this.alignment,
+    required this.wordAlignment,
     required this.onClose,
   });
 
-  @override
-  ConsumerState<WordLookupCard> createState() => _WordLookupCardState();
-}
+  // Helper function to trigger the notifier
+  void _triggerLookup(WidgetRef ref) {
+    final currentChat = ref.read(chatProvider).value;
+    if (currentChat == null) return;
 
-class _WordLookupCardState extends ConsumerState<WordLookupCard> {
-  AsyncValue<Map<String, dynamic>?> _lookupState = const AsyncValue.data(null);
-
-  Future<void> _fetchDefinition() async {
-    setState(() {
-      _lookupState = const AsyncValue.loading();
-    });
-
-    // TODO: add actual API call to fetch definition
+    ref
+        .read(wordLookupProvider.notifier)
+        .fetchDefinition(
+          word: wordAlignment.targetWord,
+          contextSentence: currentChat.translatedText,
+          sourceLanguage: currentChat.sourceLanguage,
+          targetLanguage: currentChat.targetLanguage,
+        );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lookupState = ref.watch(wordLookupProvider);
+
     return Card(
       color: Colors.white,
       elevation: 4,
@@ -47,7 +52,7 @@ class _WordLookupCardState extends ConsumerState<WordLookupCard> {
             Row(
               children: [
                 Text(
-                  widget.alignment.sourceWord,
+                  wordAlignment.sourceWord,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -62,7 +67,7 @@ class _WordLookupCardState extends ConsumerState<WordLookupCard> {
                   ),
                 ),
                 Text(
-                  widget.alignment.targetWord,
+                  wordAlignment.targetWord,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -83,20 +88,21 @@ class _WordLookupCardState extends ConsumerState<WordLookupCard> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.close, size: 18, color: Colors.grey),
-                  onPressed: widget.onClose,
+                  onPressed: onClose,
                 ),
               ],
             ),
             const Divider(height: 12),
 
-            _lookupState.when(
+            lookupState.when(
               data: (data) {
                 if (data == null) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Center(
                       child: ElevatedButton.icon(
-                        onPressed: _fetchDefinition,
+                        onPressed: () =>
+                            _triggerLookup(ref), // Trigger from here
                         icon: const Icon(Icons.translate, size: 18),
                         label: const Text('Translate Definition'),
                       ),
@@ -203,7 +209,7 @@ class _WordLookupCardState extends ConsumerState<WordLookupCard> {
                     ),
                     const SizedBox(height: 4),
                     TextButton(
-                      onPressed: _fetchDefinition,
+                      onPressed: () => _triggerLookup(ref),
                       child: const Text('Retry Lookup'),
                     ),
                   ],

@@ -1,13 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/dio_provider.dart';
 import '../domain/chat.dart';
 import '../domain/chat_repository.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
   final Dio _dio;
-
   ChatRepositoryImpl(this._dio);
 
   @override
@@ -50,9 +47,36 @@ class ChatRepositoryImpl implements ChatRepository {
       throw Exception(errorMessage ?? 'Translation failed');
     }
   }
-}
 
-final chatRepositoryProvider = Provider<ChatRepository>((ref) {
-  final dio = ref.watch(dioProvider);
-  return ChatRepositoryImpl(dio);
-});
+  @override
+  Future<Map<String, dynamic>> lookupWord({
+    required String word,
+    required String contextSentence,
+    required String sourceLanguage,
+    required String targetLanguage,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/translation/lookup',
+        data: {
+          'word': word,
+          'contextSentence': contextSentence,
+          'sourceLanguage': sourceLanguage,
+          'targetLanguage': targetLanguage,
+        },
+      );
+
+      final responseData = response.data;
+      if (responseData is! Map<String, dynamic>) {
+        throw Exception('Invalid server response format.');
+      }
+
+      return responseData;
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data is Map
+          ? e.response?.data['error']
+          : e.message;
+      throw Exception(errorMessage ?? 'Failed to lookup word');
+    }
+  }
+}

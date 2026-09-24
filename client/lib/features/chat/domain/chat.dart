@@ -1,41 +1,4 @@
-class Alignment {
-  final String sourceWord;
-  final String targetWord;
-  final int sourceStartIndex;
-  final int sourceEndIndex;
-  final int targetStartIndex;
-  final int targetEndIndex;
-
-  Alignment({
-    required this.sourceWord,
-    required this.targetWord,
-    required this.sourceStartIndex,
-    required this.sourceEndIndex,
-    required this.targetStartIndex,
-    required this.targetEndIndex,
-  });
-
-  factory Alignment.fromJson(Map<String, dynamic> json) {
-    int parseToInt(dynamic value) {
-      if (value == null) return 0;
-      if (value is int) return value;
-      if (value is double) return value.toInt();
-      if (value is String) {
-        return int.tryParse(value) ?? double.tryParse(value)?.toInt() ?? 0;
-      }
-      return 0;
-    }
-
-    return Alignment(
-      sourceWord: json['sourceWord']?.toString() ?? '',
-      targetWord: json['targetWord']?.toString() ?? '',
-      sourceStartIndex: parseToInt(json['sourceStartIndex']),
-      sourceEndIndex: parseToInt(json['sourceEndIndex']),
-      targetStartIndex: parseToInt(json['targetStartIndex']),
-      targetEndIndex: parseToInt(json['targetEndIndex']),
-    );
-  }
-}
+import 'word_alignment.dart';
 
 class Chat {
   final String id;
@@ -44,7 +7,7 @@ class Chat {
   final String sourceText;
   final String translatedText;
   final String title;
-  final List<Alignment> alignments;
+  final List<WordAlignment> wordAlignments;
   final DateTime createdAt;
 
   Chat({
@@ -54,30 +17,31 @@ class Chat {
     required this.sourceText,
     required this.translatedText,
     required this.title,
-    required this.alignments,
+    required this.wordAlignments,
     required this.createdAt,
   });
 
   factory Chat.fromJson(Map<String, dynamic> json) {
-    var rawAlignments = json['alignments'];
-    List<Alignment> parsedAlignments = [];
-    
-    if (rawAlignments is List) {
-      parsedAlignments = rawAlignments
+    var rawWordAlignments = json['alignments'];
+    List<WordAlignment> parsedWordAlignments = [];
+
+    if (rawWordAlignments is List) {
+      parsedWordAlignments = rawWordAlignments
           .where((item) => item != null)
           .map((item) {
             if (item is Map) {
-              return Alignment.fromJson(Map<String, dynamic>.from(item));
+              return WordAlignment.fromJson(Map<String, dynamic>.from(item));
             }
             return null;
           })
-          .whereType<Alignment>()
+          .whereType<WordAlignment>()
           .toList();
     }
 
     DateTime parsedDate = DateTime.now();
     if (json['createdAt'] != null) {
-      parsedDate = DateTime.tryParse(json['createdAt'].toString()) ?? DateTime.now();
+      parsedDate =
+          DateTime.tryParse(json['createdAt'].toString()) ?? DateTime.now();
     }
 
     return Chat(
@@ -87,7 +51,7 @@ class Chat {
       sourceText: json['sourceText']?.toString() ?? '',
       translatedText: json['translatedText']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
-      alignments: parsedAlignments,
+      wordAlignments: parsedWordAlignments,
       createdAt: parsedDate,
     );
   }
