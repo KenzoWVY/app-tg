@@ -350,6 +350,16 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
             ),
           ),
         ),
+        if (_selectedAlignment != null)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: WordLookupCard(
+              alignment: _selectedAlignment!,
+              onClose: () => setState(() => _selectedAlignment = null),
+            ),
+          ),
       ],
     );
   }
