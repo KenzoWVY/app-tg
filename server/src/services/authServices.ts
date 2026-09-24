@@ -88,7 +88,7 @@ export const refreshService = async (refreshToken: string) => {
         throw new Error('JWT secret key is not defined in environment variables.');
     }
 
-    const newAccessToken = jwt.sign({ userId: user._id }, jwtSecretKey, { expiresIn: '5m' });
+    const newAccessToken = jwt.sign({ userId: user._id }, jwtSecretKey, { expiresIn: '30m' });
     return newAccessToken;
 }
 

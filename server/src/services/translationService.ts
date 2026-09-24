@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Chat, { IAlignment } from '../models/Chat.js';
+import { GoogleGenAI } from '@google/genai';
 
 interface AzureAlignmentResponse {
   translations: {
@@ -110,4 +111,48 @@ export const translateAndSaveService = async (
   });
 
   return newChat;
+};
+
+export const lookupWordService = async (word: string, contextSentence: string, sourceLanguage: string, targetLanguage: string) => {
+  const googleKey = process.env.GEMINI_API_KEY || '';
+  const modelName = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const ai = new GoogleGenAI({ apiKey: googleKey });
+  if (!word) {
+      throw new Error('Word is required for lookup.');
+  }
+
+  const prompt = `
+    You are a helpful dictionary and language learning assistant.
+    - The user's native/spoken language is: "${sourceLanguage}".
+    - The language of the word being looked up is: "${targetLanguage}".
+    
+    Analyze the word "${word}" in the context of this sentence: "${contextSentence}".
+
+    Provide a strict JSON response with the following fields and NO markdown formatting or extra text outside the JSON:
+    - "word": the base or inflected form of the word being explained (in "${targetLanguage}")
+    - "translation": the translation of the word IN "${sourceLanguage}" (the user's native language)
+    - "partOfSpeech": noun, verb, adjective, etc.
+    - "gender": grammatical gender if applicable (e.g., masculine, feminine, neuter, or null)
+    - "definition": a brief definition or usage explanation written entirely in "${sourceLanguage}"
+    - "example": a short example sentence using this word written entirely in "${targetLanguage}"
+    `;
+
+  try {
+      const response = await ai.models.generateContent({
+          model: modelName,
+          contents: prompt,
+          config: {
+              responseMimeType: 'application/json',
+          },
+      });
+
+      if (!response.text) {
+          throw new Error('No response received from AI model.');
+      }
+
+      return JSON.parse(response.text.trim());
+  } catch (error: any) {
+      console.error('[AI Lookup Error]:', error.message || error);
+      throw new Error(`AI lookup failed: ${error.message}`);
+  }
 };
