@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'features/auth/presentation/auth_notifier.dart';
 import 'features/auth/presentation/login_screen.dart';
+import 'features/chat/presentation/translation_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: MainApp()));
@@ -22,9 +23,7 @@ class MainApp extends ConsumerWidget {
         error: (error, stackTrace) => const LoginScreen(),
         data: (user) {
           if (user != null) {
-            return Scaffold(
-              body: Center(child: Text('Logged in as ${user.email}')),
-            );
+            return const TranslationScreen();
           } else {
             return LoginScreen();
           }
