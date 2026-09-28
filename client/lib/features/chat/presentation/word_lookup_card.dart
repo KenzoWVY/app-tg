@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/word_alignment.dart';
 import '../state/chat_notifier.dart';
 import '../state/word_lookup_notifier.dart';
+import '../state/tts_notifier.dart';
 
 class WordLookupCard extends ConsumerWidget {
   final WordAlignment wordAlignment;
@@ -29,9 +30,16 @@ class WordLookupCard extends ConsumerWidget {
         );
   }
 
+  void _triggerPronunciation(WidgetRef ref) {
+    ref
+        .read(ttsProvider.notifier)
+        .pronounceWord(text: wordAlignment.targetWord);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final lookupState = ref.watch(wordLookupProvider);
+    final ttsState = ref.watch(ttsProvider);
 
     return Card(
       color: Colors.white,
@@ -74,15 +82,21 @@ class WordLookupCard extends ConsumerWidget {
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(
-                    Icons.volume_up,
-                    color: Colors.blue,
-                    size: 20,
-                  ),
+                  icon: ttsState.isLoading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(
+                          Icons.volume_up,
+                          color: Colors.blue,
+                          size: 20,
+                        ),
                   tooltip: 'Pronounce Word',
-                  onPressed: () {
-                    // TODO: add word pronunciation functionality
-                  },
+                  onPressed: ttsState.isLoading
+                      ? null
+                      : () => _triggerPronunciation(ref),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close, size: 18, color: Colors.grey),
@@ -99,8 +113,7 @@ class WordLookupCard extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Center(
                       child: ElevatedButton.icon(
-                        onPressed: () =>
-                            _triggerLookup(ref), // Trigger from here
+                        onPressed: () => _triggerLookup(ref),
                         icon: const Icon(Icons.translate, size: 18),
                         label: const Text('Translate Definition'),
                       ),

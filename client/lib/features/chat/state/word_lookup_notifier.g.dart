@@ -34,7 +34,7 @@ final class WordLookupNotifierProvider
 }
 
 String _$wordLookupNotifierHash() =>
-    r'9ac985cafabba7992ab58d2ec210e11ac96e2749';
+    r'0b9c6e78d8228873662c6c888c2fefa94b0daac4';
 
 abstract class _$WordLookupNotifier
     extends $AsyncNotifier<Map<String, dynamic>?> {

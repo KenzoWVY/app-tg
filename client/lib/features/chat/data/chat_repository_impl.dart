@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 
 import '../domain/chat.dart';
@@ -77,6 +79,36 @@ class ChatRepositoryImpl implements ChatRepository {
           ? e.response?.data['error']
           : e.message;
       throw Exception(errorMessage ?? 'Failed to lookup word');
+    }
+  }
+
+  @override
+  Future<Uint8List> pronounceWord({
+    required String text,
+    String? voiceName,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/tts/synthesize',
+        data: {
+          'text': text,
+          'voiceName': voiceName ?? 'en-US-AndrewMultilingualNeural',
+        },
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      return Uint8List.fromList(response.data);
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+      String? errorMessage;
+
+      if (responseData is Map<String, dynamic>) {
+        errorMessage = responseData['error']?.toString();
+      }
+
+      throw Exception(
+        errorMessage ?? e.message ?? 'Failed to synthesize speech',
+      );
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,6 +23,8 @@ abstract class ChatRepository {
     required String sourceLanguage,
     required String targetLanguage,
   });
+
+  Future<Uint8List?> pronounceWord({required String text, String? voiceName});
 }
 
 @riverpod
