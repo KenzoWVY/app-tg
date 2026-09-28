@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/word_alignment.dart';
 import '../state/chat_notifier.dart';
-import '../state/word_lookup_notifier.dart'; // 👈 Import the notifier we just made
+import '../state/word_lookup_notifier.dart';
 
-// Converted from ConsumerStatefulWidget to ConsumerWidget
 class WordLookupCard extends ConsumerWidget {
   final WordAlignment wordAlignment;
   final VoidCallback onClose;
@@ -16,7 +15,6 @@ class WordLookupCard extends ConsumerWidget {
     required this.onClose,
   });
 
-  // Helper function to trigger the notifier
   void _triggerLookup(WidgetRef ref) {
     final currentChat = ref.read(chatProvider).value;
     if (currentChat == null) return;
