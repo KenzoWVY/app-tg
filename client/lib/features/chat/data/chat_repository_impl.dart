@@ -52,6 +52,29 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
+  Future<List<Chat>> getUserChats() async {
+    try {
+      final response = await _dio.get('/chats');
+      final responseData = response.data;
+
+      if (responseData is! Map<String, dynamic>) {
+        throw Exception('Invalid server response format.');
+      }
+
+      final chatsList = responseData['chats'] as List? ?? [];
+      return chatsList
+          .where((item) => item is Map<String, dynamic>)
+          .map((json) => Chat.fromJson(Map<String, dynamic>.from(json)))
+          .toList();
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data is Map
+          ? e.response?.data['error']
+          : e.message;
+      throw Exception(errorMessage ?? 'Failed to fetch chats');
+    }
+  }
+
+  @override
   Future<Map<String, dynamic>> lookupWord({
     required String word,
     required String contextSentence,

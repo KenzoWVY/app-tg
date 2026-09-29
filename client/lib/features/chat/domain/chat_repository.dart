@@ -15,6 +15,8 @@ abstract class ChatRepository {
     String? title,
   });
 
+  Future<List<Chat>> getUserChats();
+
   Future<Map<String, dynamic>> lookupWord({
     required String word,
     required String contextSentence,

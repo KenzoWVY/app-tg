@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/secure_storage_provider.dart';
 import '../domain/chat.dart' as chat_domain;
 import '../state/chat_notifier.dart';
 import '../domain/word_alignment.dart';
+import 'translation_sidebar.dart';
 import 'word_lookup_card.dart';
 import 'quiz_screen.dart';
 
@@ -27,6 +29,39 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
     super.dispose();
   }
 
+  void _handleNewTranslation() {
+    ref.read(chatProvider.notifier).loadChat(null);
+
+    setState(() {
+      _textController.clear();
+      _isEditing = true;
+      _selectedAlignment = null;
+    });
+  }
+
+  void _handleChatSelected(chat_domain.Chat chat) {
+    ref.read(chatProvider.notifier).loadChat(chat);
+
+    setState(() {
+      if (chat.sourceLanguage != null) {
+        _sourceLanguage = chat.sourceLanguage!;
+      }
+      _targetLanguage = chat.targetLanguage;
+
+      _isEditing = false;
+      _selectedAlignment = null;
+    });
+  }
+
+  void _handleLogout() async {
+    final storage = ref.read(secureStorageProvider);
+    await storage.deleteAll();
+
+    ref.read(chatProvider.notifier).loadChat(null);
+
+    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final chatState = ref.watch(chatProvider);
@@ -42,6 +77,11 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
     });
 
     return Scaffold(
+      drawer: TranslationSidebar(
+        onChatSelected: _handleChatSelected,
+        onNewTranslationSelected: _handleNewTranslation,
+        onLogout: _handleLogout,
+      ),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -137,6 +177,8 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
                           onPressed: () => setState(() {
                             _isEditing = true;
                             _selectedAlignment = null;
+                            _textController.text =
+                                chatState.value?.sourceText ?? '';
                           }),
                           icon: const Icon(Icons.edit, size: 18),
                           label: const Text('Edit'),
