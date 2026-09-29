@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../domain/chat.dart';
 import '../domain/chat_repository.dart';
+import '../domain/quiz_question.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
   final Dio _dio;
@@ -109,6 +110,22 @@ class ChatRepositoryImpl implements ChatRepository {
       throw Exception(
         errorMessage ?? e.message ?? 'Failed to synthesize speech',
       );
+    }
+  }
+
+  @override
+  Future<List<QuizQuestion>> generateQuiz(String chatId) async {
+    try {
+      final response = await _dio.post(
+        '/quiz/generate',
+        data: {'chatId': chatId},
+      );
+
+      final List questionsJson = response.data['questions'] ?? [];
+      return questionsJson.map((q) => QuizQuestion.fromJson(q)).toList();
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['error'] ?? e.message;
+      throw Exception(errorMessage ?? 'Failed to generate questionnaire');
     }
   }
 }

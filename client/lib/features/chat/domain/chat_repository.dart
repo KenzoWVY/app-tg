@@ -1,13 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/dio_provider.dart';
 import '../data/chat_repository_impl.dart';
 import 'chat.dart';
-
-part 'chat_repository.g.dart';
+import 'quiz_question.dart';
 
 abstract class ChatRepository {
   Future<Chat> translateAndSave({
@@ -25,10 +23,11 @@ abstract class ChatRepository {
   });
 
   Future<Uint8List?> pronounceWord({required String text, String? voiceName});
+
+  Future<List<QuizQuestion>> generateQuiz(String chatId);
 }
 
-@riverpod
-ChatRepository chatRepository(Ref ref) {
+final chatRepositoryProvider = Provider<ChatRepository>((ref) {
   final dio = ref.watch(dioProvider);
   return ChatRepositoryImpl(dio);
-}
+});

@@ -5,6 +5,7 @@ import '../domain/chat.dart' as chat_domain;
 import '../state/chat_notifier.dart';
 import '../domain/word_alignment.dart';
 import 'word_lookup_card.dart';
+import 'quiz_screen.dart';
 
 class TranslationScreen extends ConsumerStatefulWidget {
   const TranslationScreen({super.key});
@@ -48,7 +49,25 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
         actions: [
           TextButton.icon(
             onPressed: () {
-              // TODO
+              final chat = chatState.value;
+              if (chat == null || chat.id.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Text not translated yet. Please translate text before creating a quiz.',
+                    ),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+                return;
+              }
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QuizScreen(chatId: chat.id),
+                ),
+              );
             },
             icon: const Icon(Icons.quiz_outlined, size: 18),
             label: const Text('Create Quiz'),
