@@ -43,7 +43,7 @@ export const authUser = async (email: string, password: string) =>  {
     if (!jwtSecretKey) {
         throw new Error('JWT secret key is not defined in environment variables.');
     }
-    const token = jwt.sign({ userId: user._id }, jwtSecretKey, { expiresIn: '5m' });
+    const token = jwt.sign({ userId: user._id }, jwtSecretKey, { expiresIn: '30m' });
 
     const jwtRefreshSecretKey = process.env.JWT_REFRESH_KEY;
     if (!jwtRefreshSecretKey) {
@@ -89,7 +89,9 @@ export const refreshService = async (refreshToken: string) => {
     }
 
     const newAccessToken = jwt.sign({ userId: user._id }, jwtSecretKey, { expiresIn: '30m' });
-    return newAccessToken;
+    return {
+        accessToken: newAccessToken,
+    }
 }
 
 export const getUserInfo = async (userId: string) => {

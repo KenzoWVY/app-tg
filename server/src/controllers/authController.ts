@@ -26,10 +26,15 @@ export const login = async (req: AuthRequest, res: Response) => {
 export const refresh = async (req: AuthRequest, res: Response) => {
     try {
         const { refreshToken } = req.body;
-        const newAccessToken = await refreshService(refreshToken);
-        res.status(200).json({ token: newAccessToken });
+
+        if (!refreshToken) {
+            return res.status(400).json({ error: 'Refresh token is required.' });
+        }
+
+        const result = await refreshService(refreshToken);
+        res.status(200).json({result});
     } catch (error: any) {
-        res.status(403).json({ error: error.message });
+        res.status(401).json({ error: error.message });
     }
 }
 
