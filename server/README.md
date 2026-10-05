@@ -1,10 +1,25 @@
-## Run mongoDB container
+[English](./README.md) | [Português](./README.pt.md)
 
-Add .env file with admin credentials (use the ".env.example" template)
+### Prerequisites
 
-Set up the containter on terminal (Docker Desktop must be running):
+* Node.js & npm installed locally
+* A running MongoDB instance (Local or MongoDB Atlas URI)
+* Microsoft Azure Speech Service and Translator subscription keys and regions
+* Google AI Studio API key
+
+### 1. Install Dependencies
+Navigate into the server directory and install the required packages:
+
+```bash
+npm install
 ```
-docker-compose up -d
-```
 
-Check mongo express on http://localhost:8081/
+### 2. Configure Environment Variables
+Create a `.env` file (use `.env.example` as a template).
+
+### 3. Start the Server
+Run the following command on the server directory:
+
+```bash
+npm run dev
+```
