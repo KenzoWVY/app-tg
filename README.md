@@ -34,5 +34,5 @@ A full-stack language-learning and translation application that provides real-ti
 ## 🛠️ Installation & Getting Started
 
 To run this project locally, refer to the specific configuration guides in each directory:
-* 🖥️ **Backend Setup:** Check [`server/README.md`](./backend/README.md)
-* 📱 **Frontend Setup:** Check [`client/README.md`](./frontend/README.md)
+* 🖥️ **Backend Setup:** Check [`server/README.md`](./server/README.md)
+* 📱 **Frontend Setup:** Check [`client/README.md`](./client/README.md)

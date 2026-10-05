@@ -36,5 +36,5 @@ Um aplicativo full-stack de aprendizado de idiomas e tradução que fornece trad
 
 Para executar este projeto localmente, consulte os guias de configuração específicos em cada diretório:
 
-* 🖥️ **Configuração do Backend:** Verifique [`server/README.md`](./backend/README.md)
-* 📱 **Configuração do Frontend:** Verifique [`client/README.md`](./frontend/README.md)
+* 🖥️ **Configuração do Backend:** Verifique [`server/README.md`](./server/README.md)
+* 📱 **Configuração do Frontend:** Verifique [`client/README.md`](./client/README.md)
