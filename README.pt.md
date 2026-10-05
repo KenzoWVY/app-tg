@@ -4,6 +4,10 @@
 
 Um aplicativo full-stack de aprendizado de idiomas e tradução que fornece traduções em tempo real, alinhamento granular de palavras, áudio de conversão de texto em fala natural e quizzes de compreensão gerados por IA.
 
+<p align="center">
+  <img src="./assets/translation.gif" width="300" alt="App Demo">
+</p>
+
 ## 👨‍💻 Stack de Desenvolvimento
 
 ### 📱 Frontend
