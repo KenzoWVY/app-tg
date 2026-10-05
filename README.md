@@ -5,7 +5,7 @@
 A full-stack language-learning and translation application that provides real-time translations, granular word alignments, natural text-to-speech audio, and AI-generated comprehension quizzes.
 
 <p align="center">
-  <img src="./assets/translation.gif" width="200" alt="App Demo">
+  <img src="./assets/translation.gif" width="300" alt="App Demo">
 </p>
 
 ## 👨‍💻 Development Stack
