@@ -1,6 +1,6 @@
 # Aplicativo de Tradução e Quiz com IA 🌍📱
 
-[English](https://www.google.com/search?q=./README.md) | [Português](https://www.google.com/search?q=./README.pt.md)
+[English](./README.md) | [Português](./README.pt.md)
 
 Um aplicativo full-stack de aprendizado de idiomas e tradução que fornece traduções em tempo real, alinhamento granular de palavras, áudio de conversão de texto em fala natural e quizzes de compreensão gerados por IA.
 
@@ -32,5 +32,5 @@ Um aplicativo full-stack de aprendizado de idiomas e tradução que fornece trad
 
 Para executar este projeto localmente, consulte os guias de configuração específicos em cada diretório:
 
-* 🖥️ **Configuração do Backend:** Verifique [`server/README.md`](https://www.google.com/search?q=./backend/README.md)
-* 📱 **Configuração do Frontend:** Verifique [`client/README.md`](https://www.google.com/search?q=./frontend/README.md)
+* 🖥️ **Configuração do Backend:** Verifique [`server/README.md`](./backend/README.md)
+* 📱 **Configuração do Frontend:** Verifique [`client/README.md`](./frontend/README.md)
