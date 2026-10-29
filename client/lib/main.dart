@@ -17,6 +17,7 @@ class MainApp extends ConsumerWidget {
     final authState = ref.watch(authNotifierProvider);
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: authState.when(
         loading: () =>
             Scaffold(body: Center(child: CircularProgressIndicator())),

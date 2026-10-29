@@ -6,12 +6,15 @@ import 'auth_interceptor.dart';
 final dioProvider = Provider<Dio>((ref) {
   final storage = ref.read(secureStorageProvider);
 
-  const baseUrl = 'http://10.0.2.2:3000/api';
+  const baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'http://10.0.2.2:3000/api',
+  );
 
   final options = BaseOptions(
     baseUrl: baseUrl,
-    connectTimeout: const Duration(seconds: 10),
-    receiveTimeout: const Duration(seconds: 10),
+    connectTimeout: const Duration(seconds: 60),
+    receiveTimeout: const Duration(seconds: 60),
   );
 
   final dio = Dio(options);
