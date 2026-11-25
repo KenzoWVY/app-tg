@@ -19,7 +19,7 @@ export const synthesizeSpeechService = async (
     speechConfig.speechSynthesisVoiceName = voiceName;
     speechConfig.speechSynthesisOutputFormat = sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3;
 
-    const synthesizer = new sdk.SpeechSynthesizer(speechConfig, undefined);
+    const synthesizer = new sdk.SpeechSynthesizer(speechConfig, null as unknown as sdk.AudioConfig);
 
     return new Promise((resolve, reject) => {
         synthesizer.speakTextAsync(
